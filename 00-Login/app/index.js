@@ -7,7 +7,6 @@
 import React, { Component } from 'react';
 import {
   Alert,
-  AppRegistry,
   Button,
   Platform,
   StyleSheet,
@@ -22,7 +21,7 @@ const auth0 = new Auth0(credentials);
 export default class Auth0Sample extends Component {
   constructor(props) {
     super(props);
-    this.state = { accessToken: null };
+    this.state = { accessToken: null, error: null };
   }
 
   _onLogin = () => {
@@ -38,9 +37,15 @@ export default class Auth0Sample extends Component {
           [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
           { cancelable: false }
         );
-        this.setState({ accessToken: credentials.accessToken });
+        this.setState({ 
+          accessToken: credentials.accessToken, 
+          error:null 
+        });
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.log(error);
+        this.setState({error});
+      });
   };
 
   _onLogout = () => {
@@ -64,10 +69,17 @@ export default class Auth0Sample extends Component {
         <Text>
           You are {loggedIn ? '' : 'not '}logged in.
         </Text>
-        <Button
-          onPress={loggedIn ? this._onLogout : this._onLogin}
-          title={loggedIn ? 'Log Out' : 'Log In'}
-        />
+        <View style={{paddingVertical:15}}>
+          <Button
+            onPress={loggedIn ? this._onLogout : this._onLogin}
+            title={loggedIn ? 'Log Out' : 'Log In'}
+          />
+        </View>
+        {this.state.error &&
+          <Text style={styles.errorText}>
+            {this.state.error.error_description}
+          </Text>
+        }
       </View>
     );
   }
@@ -84,7 +96,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight:'bold',
+    color:'crimson',
   }
 });
-
-AppRegistry.registerComponent('Auth0Sample', () => Auth0Sample);

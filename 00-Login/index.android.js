@@ -1,1 +1,1 @@
-import Auth0Sample from './app/index'
+import App from './app/app'
